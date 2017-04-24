@@ -12,6 +12,7 @@ usage: cli.py [-h] [--function_name FUNCTION_NAME] [--key_to_sign KEY_TO_SIGN]
               [--kmsauth_autogen_service KMSAUTH_AUTOGEN_SERVICE] [-v]
               region bastion_user bastion_ip remote_users ssh_source_ip
 
+Get your pub key signed by BLESS
 
 positional arguments:
   region                AWS region where your lambda is deployed

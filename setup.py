@@ -1,6 +1,7 @@
 from setuptools import setup
 
-setup(name='blessup',
+setup(
+      name='blessup',
       version='0.0.1',
       description='BLESS client',
       entry_points={
@@ -11,4 +12,9 @@ setup(name='blessup',
       author_email='djcrabhat@sosimplerecords.com',
       license='MIT',
       packages=['blessup'],
-      zip_safe=False)
+      install_requires=[
+          'boto3',
+          'kmsauth'
+      ],
+      zip_safe=False
+      )
