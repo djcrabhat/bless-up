@@ -6,6 +6,7 @@ import sys
 import os
 
 import argparse
+import logging
 
 
 def parse_args():
@@ -32,12 +33,20 @@ def parse_args():
     parser.add_argument('--kmsauth_autogen_service', help='If you want to try an automatically generate a user token, '
                                                           'the service name being used by BLESS')
 
+    parser.add_argument('-v', '--verbose', action='count', default=0, help="enable verbose logging, multiple \"v\"s "
+                                                                           "for deeper logging levels")
+
     return parser.parse_args()
 
 
 def main(args=None):
     if not args:
         args = parse_args()
+
+    levels = [logging.WARNING, logging.INFO, logging.DEBUG]
+    level = levels[min(len(levels) - 1, args.verbose)]  # capped to number of levels
+    logging.basicConfig(level=level)
+
     region, lambda_function_name, bastion_user, bastion_user_ip, remote_usernames, bastion_ips, \
     bastion_command, public_key_filename, certificate_filename = args.region, args.function_name, args.bastion_user, \
                                                                  args.bastion_ip, args.remote_users, \

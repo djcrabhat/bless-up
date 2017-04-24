@@ -1,12 +1,15 @@
 import json
 import boto3
+from logging import getLogger
 
 try:
     import kmsauth
+
     KMS_AUTH = True
 except ImportError:
     KMS_AUTH = False
 
+log = getLogger(__name__)
 
 
 class BlessClient:
@@ -33,31 +36,29 @@ class BlessClient:
         elif self.kmsauth_autogen:
             auth_username, payload['kmsauth_token'] = self.generate_user_token(bastion_user)
 
-
         payload_json = json.dumps(payload)
 
-        print('Executing:')
-        print('payload_json is: \'{}\''.format(payload_json))
+        log.info('Executing:')
+        log.info('payload_json is: \'{}\''.format(payload_json))
         lambda_client = boto3.client('lambda', region_name=self.region)
         response = lambda_client.invoke(FunctionName=self.function_name,
                                         InvocationType='RequestResponse',
                                         LogType='None',
                                         Payload=payload_json)
-        print('{}\n'.format(response['ResponseMetadata']))
+        log.info('Response: {}\n'.format(response['ResponseMetadata']))
 
         if response['StatusCode'] != 200:
-            print ('Error creating cert.')
+            log.error('Error creating cert.')
             return -1
 
         payload = json.loads(response['Payload'].read())
 
         if 'certificate' not in payload:
-            print payload
+            log.error('certificate not found: %s' % payload)
             return -1
 
         cert = payload['certificate']
         return cert
-
 
     def generate_user_token(self, user):
         if not KMS_AUTH:
