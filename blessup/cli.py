@@ -10,7 +10,7 @@ import logging
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Get a cert for a pub key with BLESS')
+    parser = argparse.ArgumentParser(description='Get your pub key signed by BLESS')
     parser.add_argument('region', help='AWS region where your lambda is deployed')
     parser.add_argument('bastion_user', help='User requesting the signing, for logging')
     parser.add_argument('bastion_ip', help='IP of user requesting the signing, for logging')

@@ -9,15 +9,14 @@ Usage
 usage: cli.py [-h] [--function_name FUNCTION_NAME] [--key_to_sign KEY_TO_SIGN]
               [--cert_output CERT_OUTPUT] [--kmsauth KMSAUTH]
               [--kmsauth_autogen_key KMSAUTH_AUTOGEN_KEY]
-              [--kmsauth_autogen_service KMSAUTH_AUTOGEN_SERVICE]
+              [--kmsauth_autogen_service KMSAUTH_AUTOGEN_SERVICE] [-v]
               region bastion_user bastion_ip remote_users ssh_source_ip
 
-Sign a cert for a pub key with bless
 
 positional arguments:
   region                AWS region where your lambda is deployed
-  bastion_user          user requesting the signing, for logging
-  bastion_ip            ip of user requesting the signing, for logging
+  bastion_user          User requesting the signing, for logging
+  bastion_ip            IP of user requesting the signing, for logging
   remote_users          Comma-separated list of username(s) or authorized
                         principals on the remote server that will be used in
                         the SSH request. This is enforced in the issued
@@ -31,15 +30,21 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --function_name FUNCTION_NAME
+                        Name of the BLESS lambda function
   --key_to_sign KEY_TO_SIGN
+                        The .pub key to sign, defaults to ~/.ssh/id_rsa.pub
   --cert_output CERT_OUTPUT
+                        The output of the signed request. defaults to ~/.ssh
+                        /id_rsa-cert.pub
   --kmsauth KMSAUTH     KMS auth token, if kmsauth is setup. see:
                         github.com/lyft/python-kmsauth
   --kmsauth_autogen_key KMSAUTH_AUTOGEN_KEY
-                        if you want to try an automatically generate a user
-                        token, then use this key
+                        If you want to try an automatically generate a user
+                        token, the key to usthis key
   --kmsauth_autogen_service KMSAUTH_AUTOGEN_SERVICE
-                        if you want to try an automatically generate a user
+                        If you want to try an automatically generate a user
                         token, the service name being used by BLESS
+  -v, --verbose         enable verbose logging, multiple "v"s for deeper
+                        logging levels
 ```
 
