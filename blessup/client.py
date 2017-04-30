@@ -12,10 +12,13 @@ except ImportError:
 log = getLogger(__name__)
 
 
+
+
 class BlessClient:
     def __init__(self, region, function_name='bless', args=None):
         self.region = region
         self.function_name = function_name
+
 
         self.kmsauth_autogen = False
         if args:
@@ -61,6 +64,14 @@ class BlessClient:
         return cert
 
     def generate_user_token(self, user):
+        '''
+        Question: what kinda access control is it if I have direct access to the authorization key, generate it myself?
+                  You'd probably get something handed to you by https://lyft.github.io/confidant/
+        
+        :param user: 
+        :return:
+        
+        '''
         if not KMS_AUTH:
             raise ValueError("kmsauth is not installed")
 
@@ -79,7 +90,7 @@ class BlessClient:
                 'user_type': 'user'
             },
             # Find the KMS key in this region
-            'us-west-2'
+            self.region
         )
         username = generator.get_username()
         token = generator.get_token()
