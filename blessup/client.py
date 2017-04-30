@@ -26,6 +26,7 @@ class BlessClient:
                 self.kmsauth_autogen_key = args.kmsauth_autogen_key
                 self.kmsauth_autogen_service = args.kmsauth_autogen_service
                 self.kmsauth_autogen = True
+                self.kmsauth_mfa_serial = args.mfa_serial
         pass
 
     def sign_key(self, bastion_user, bastion_user_ip, remote_usernames, bastion_ips, public_key, bastion_command='*',
@@ -75,6 +76,10 @@ class BlessClient:
         if not KMS_AUTH:
             raise ValueError("kmsauth is not installed")
 
+        ## prompt for session
+        mfa_creds = self.get_mfa_session(self.kmsauth_mfa_serial)
+
+
         # user to service authentication
         generator = kmsauth.KMSTokenGenerator(
             # KMS key to use for authentication
@@ -90,9 +95,22 @@ class BlessClient:
                 'user_type': 'user'
             },
             # Find the KMS key in this region
-            self.region
+            self.region,
+            aws_creds = mfa_creds
         )
         username = generator.get_username()
         token = generator.get_token()
 
         return username, token
+
+    def get_mfa_session(self, mfa_serial=None):
+        client = boto3.client('sts', region_name=self.region)
+        if mfa_serial:
+            token_code = raw_input("MFA Code for %s : "%mfa_serial)
+            if token_code:
+                response = client.get_session_token(
+                    SerialNumber=mfa_serial,
+                    TokenCode=token_code
+                )
+                return response.get('Credentials')
+        return
